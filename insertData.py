@@ -1,12 +1,23 @@
+import os
 import pandas as pd
 import mysql.connector
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get MySQL connection details from environment variables
+host = os.getenv("MYSQL_HOST")
+user = os.getenv("MYSQL_USER")
+password = os.getenv("MYSQL_PASSWORD")
+database = os.getenv("MYSQL_DATABASE")
 
 # Connect to MySQL database
 mydb = mysql.connector.connect(
-  host="localhost",
-  user="yourusername",
-  password="yourpassword",
-  database="library"
+  host=host,
+  user=user,
+  password=password,
+  database=database
 )
 
 # Create cursor object
