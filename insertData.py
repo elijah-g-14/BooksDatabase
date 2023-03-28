@@ -1,45 +1,41 @@
+import csv
+import pymysql
 import os
-import pandas as pd
-import mysql.connector
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
-# Get MySQL connection details from environment variables
+# Replace the values in <> with your actual MariaDB configuration
 host = os.getenv("MYSQL_HOST")
 user = os.getenv("MYSQL_USER")
 password = os.getenv("MYSQL_PASSWORD")
 database = os.getenv("MYSQL_DATABASE")
+port = 3306
 
-# Connect to MySQL database
-mydb = mysql.connector.connect(
-  host=host,
-  user=user,
-  password=password,
-  database=database
-)
+# Create a connection object
+conn = pymysql.connect(host=host, port=port, user=user, password=password, database=database)
 
-# Create cursor object
-cursor = mydb.cursor()
+# Create a cursor object
+cursor = conn.cursor()
 
-# Read data from CSV file using pandas
-data = pd.read_csv("authors.csv")
+# Open the CSV file
+with open('authors.csv') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
 
-# Loop through rows in data and insert into books_Author table
-for i, row in data.iterrows():
-    author_id = row["author_id"]
-    author_name = row["author_name"]
-    
-    # Define SQL query to insert row into books_Author table
-    sql = "INSERT INTO books_Author (id, name) VALUES (%s, %s)"
-    values = (author_id, author_name)
-    
-    # Execute SQL query
-    cursor.execute(sql, values)
+    # Skip the header row
+    next(csv_reader)
 
-# Commit changes to database
-mydb.commit()
+    # Loop through each row in the CSV file
+    for row in csv_reader:
+        id = row[0]
+        name = (row[1]).encode('utf-8')
 
-# Close database connection
-mydb.close()
+        # Insert the row into the database
+        sql = "INSERT INTO books_Author (id, name) VALUES (%s, %s)"
+        values = (id, name)
+        cursor.execute(sql, values)
+        conn.commit()
+
+# Close the cursor and connection objects
+cursor.close()
+conn.close()
