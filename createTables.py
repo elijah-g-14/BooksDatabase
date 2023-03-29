@@ -31,10 +31,9 @@ cursor.execute("DROP TABLE IF EXISTS books_CoverImage;")
 cursor.execute("""
 CREATE TABLE books_Author (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+    name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 );
 """)
-
 
 cursor.execute("""
 CREATE TABLE books_Category (
