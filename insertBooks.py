@@ -67,7 +67,7 @@ try:
             edition = row[7] if row[7] else None
             edition_statement = row[8] if row[8] else None
             for_ages = row[9] if row[9] else None
-            book_format = int(row[10]) if row[10] != '' else None
+            book_format = int(row[10]) if row[10] or not row[10].isdigit() else None
             illustrations_note = row[12] if row[12] else None
             image_checksum = row[13] if row[13] else None
             image_path = row[14] if row[14] else None
@@ -83,6 +83,7 @@ try:
             print("ID: ", counter)
             print("Format: ", book_format)
             print("Rating: ", rating_count)
+            print("Isdigit: ", row[10].isdigit())
 
 
             # Insert the row into the books_CoverImage table

@@ -20,6 +20,7 @@ cursor = conn.cursor()
 cursor.execute("USE library;")
 
 ##Drop the table if they exist
+cursor.execute("DROP TABLE IF EXISTS books_BookAuthors;")
 cursor.execute("DROP TABLE IF EXISTS books_Author;")
 
 ##Create the table
