@@ -8,3 +8,6 @@ python3 insertCategories.py
 
 # Run insertFormats.py
 python3 insertFormats.py
+
+# Run insertBooks.py
+python3 insertBooks.py

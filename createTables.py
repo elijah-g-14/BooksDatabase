@@ -53,7 +53,7 @@ image_url VARCHAR(255) NOT NULL
 cursor.execute("""
 CREATE TABLE books_Book (
 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+title VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
 edition VARCHAR(255),
 edition_statement VARCHAR(255),

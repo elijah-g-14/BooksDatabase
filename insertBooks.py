@@ -30,8 +30,8 @@ try:
         # Skip the header row
         next(data_csv_reader)
 
-        # Initialize counter to 0
-        counter = 0
+        # Initialize skipped to 0
+        skipped = 0
 
         # Loop through each row in the CSV file
         for row in data_csv_reader:
@@ -67,7 +67,7 @@ try:
             edition = row[7] if row[7] else None
             edition_statement = row[8] if row[8] else None
             for_ages = row[9] if row[9] else None
-            book_format = int(row[10]) if row[10] or not row[10].isdigit() else None
+            book_format = int(row[10]) if row[10] != '' else None
             illustrations_note = row[12] if row[12] else None
             image_checksum = row[13] if row[13] else None
             image_path = row[14] if row[14] else None
@@ -80,50 +80,50 @@ try:
             url = row[26] if row[26] else None
             weight = float(row[27]) if row[27] else None
 
-            print("ID: ", counter)
-            print("Format: ", book_format)
-            print("Rating: ", rating_count)
-            print("Isdigit: ", row[10].isdigit())
+            try:
 
-
-            # Insert the row into the books_CoverImage table
-            sql = "INSERT INTO books_CoverImage (image_checksum, image_path, image_url) VALUES (%s, %s, %s)"
-            values = (image_checksum, image_path, image_url)
-            cursor.execute(sql, values)
-            conn.commit()
-
-            # Get the ID of the last inserted row in books_CoverImage
-            cover_image_id = cursor.lastrowid
-
-            # Insert the row into the books_Book table
-            sql = "INSERT INTO books_Book (title, description, edition, edition_statement, for_ages, illustrations_note, imprint, index_date, isbn10, isbn13, lang, publication_date, rating_avg, rating_count, url, weight, format_id, cover_image_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = (title, description, edition, edition_statement, for_ages, illustrations_note, imprint, index_date, isbn10, isbn13, lang, publication_date, rating_avg, rating_count, url, weight, book_format, cover_image_id)
-            cursor.execute(sql, values)
-            conn.commit()
-
-            # Get the ID of the last inserted row in books_Book
-            book_id = cursor.lastrowid
-
-            author_ids_array = [int(x) for x in authors[1:-1].split(',')]
-
-            # Insert book-author relationships into books_BookAuthors table
-            for author_id in author_ids_array:
-                sql = "INSERT INTO books_BookAuthors (book_id, author_id) VALUES (%s, %s)"
-                values = (book_id, author_id)
+                # Insert the row into the books_CoverImage table
+                sql = "INSERT INTO books_CoverImage (image_checksum, image_path, image_url) VALUES (%s, %s, %s)"
+                values = (image_checksum, image_path, image_url)
                 cursor.execute(sql, values)
-            conn.commit()
+                conn.commit()
 
-            category_ids_array = [int(x) for x in category_ids[1:-1].split(',')]
+                # Get the ID of the last inserted row in books_CoverImage
+                cover_image_id = cursor.lastrowid
 
-            # Insert the book-category relationship into the books_BookCategories table
-            for category_id in category_ids_array:
-                sql = "INSERT INTO books_BookCategories (book_id, category_id) VALUES (%s, %s)"
-                values = (book_id, category_id)
+                # Insert the row into the books_Book table
+                sql = "INSERT INTO books_Book (title, description, edition, edition_statement, for_ages, illustrations_note, imprint, index_date, isbn10, isbn13, lang, publication_date, rating_avg, rating_count, url, weight, format_id, cover_image_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                values = (title, description, edition, edition_statement, for_ages, illustrations_note, imprint, index_date, isbn10, isbn13, lang, publication_date, rating_avg, rating_count, url, weight, book_format, cover_image_id)
                 cursor.execute(sql, values)
-            conn.commit()
+                conn.commit()
 
-            # Increment counter by 1
-            counter += 1
+                # Get the ID of the last inserted row in books_Book
+                book_id = cursor.lastrowid
+
+                author_ids_array = [int(x) for x in authors[1:-1].split(',')]
+
+                # Insert book-author relationships into books_BookAuthors table
+                for author_id in author_ids_array:
+                    sql = "INSERT INTO books_BookAuthors (book_id, author_id) VALUES (%s, %s)"
+                    values = (book_id, author_id)
+                    cursor.execute(sql, values)
+                conn.commit()
+
+                category_ids_array = [int(x) for x in category_ids[1:-1].split(',')]
+
+                # Insert the book-category relationship into the books_BookCategories table
+                for category_id in category_ids_array:
+                    sql = "INSERT INTO books_BookCategories (book_id, category_id) VALUES (%s, %s)"
+                    values = (book_id, category_id)
+                    cursor.execute(sql, values)
+                conn.commit()
+
+            except ValueError as e:
+                # Increment skipped by 1
+                skipped += 1
+                continue  # Skip this row and move to the next one
+
+        print("Number of skipped rows: ", skipped)
 
 except Exception  as e:
     print(f"Error: {str(e)}")
