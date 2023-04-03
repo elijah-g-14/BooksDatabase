@@ -20,20 +20,15 @@ cursor = conn.cursor()
 cursor.execute("USE library;")
 
 ##Drop the tables if they exist
+cursor.execute("DROP TABLE IF EXISTS books_BookAuthors;")
+cursor.execute("DROP TABLE IF EXISTS books_BookCategories;")
 cursor.execute("DROP TABLE IF EXISTS books_Book;")
-cursor.execute("DROP TABLE IF EXISTS books_Author;")
 cursor.execute("DROP TABLE IF EXISTS books_Category;")
 cursor.execute("DROP TABLE IF EXISTS books_Format;")
-cursor.execute("DROP TABLE IF EXISTS books_PublicationPlace;")
 cursor.execute("DROP TABLE IF EXISTS books_CoverImage;")
 
+
 ##Create the tables
-cursor.execute("""
-CREATE TABLE books_Author (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
-);
-""")
 
 cursor.execute("""
 CREATE TABLE books_Category (
@@ -43,12 +38,6 @@ name VARCHAR(255) NOT NULL
 
 cursor.execute("""
 CREATE TABLE books_Format (
-id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-name VARCHAR(255) NOT NULL
-);""")
-
-cursor.execute("""
-CREATE TABLE books_PublicationPlace (
 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 name VARCHAR(255) NOT NULL
 );""")
@@ -80,16 +69,28 @@ rating_avg FLOAT,
 rating_count INT,
 url VARCHAR(255),
 weight FLOAT,
-author_id INT,
-category_id INT,
 format_id INT,
-publication_place_id INT,
 cover_image_id INT,
-CONSTRAINT FK_Book_Author FOREIGN KEY (author_id) REFERENCES books_Author(id),
-CONSTRAINT FK_Book_Category FOREIGN KEY (category_id) REFERENCES books_Category(id),
 CONSTRAINT FK_Book_Format FOREIGN KEY (format_id) REFERENCES books_Format(id),
-CONSTRAINT FK_Book_PublicationPlace FOREIGN KEY (publication_place_id) REFERENCES books_PublicationPlace(id),
 CONSTRAINT FK_Book_CoverImage FOREIGN KEY (cover_image_id) REFERENCES books_CoverImage(id)
+);""")
+
+cursor.execute("""
+CREATE TABLE books_BookAuthors (
+book_id INT NOT NULL,
+author_id INT NOT NULL,
+PRIMARY KEY (book_id, author_id),
+CONSTRAINT FK_Book_Id FOREIGN KEY (book_id) REFERENCES library.books_Book(id),
+CONSTRAINT FK_Book_Author_Id FOREIGN KEY (author_id) REFERENCES library.books_Author(id)
+);""")
+
+cursor.execute("""
+CREATE TABLE books_BookCategories (
+book_id INT,
+category_id INT,
+PRIMARY KEY (book_id, category_id),
+CONSTRAINT FK_Book_Ids FOREIGN KEY (book_id) REFERENCES books_Book(id),
+CONSTRAINT FK_Book_Categories FOREIGN KEY (category_id) REFERENCES books_Category(id)
 );""")
 
 ##Close the cursor and connection objects
