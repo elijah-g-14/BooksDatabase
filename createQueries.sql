@@ -9,7 +9,7 @@ DELIMITER //
 
 CREATE PROCEDURE GetByCategory(IN category_name VARCHAR(255))
 BEGIN
-    SELECT B.id, B.title, GROUP_CONCAT(C.name SEPARATOR ', ') AS categories
+    SELECT B.title, GROUP_CONCAT(C.name SEPARATOR ', ') AS categories
     FROM books_Book B
     INNER JOIN books_BookCategories BC ON B.id = BC.book_id
     INNER JOIN books_Category C ON BC.category_id = C.id
@@ -24,7 +24,7 @@ DELIMITER //
 
 CREATE PROCEDURE GetByYear(IN year INT)
 BEGIN
-    SELECT B.id, B.title, A.name AS author, F.name AS format
+    SELECT B.title, A.name AS author, F.name AS format
     FROM books_Book B
     INNER JOIN books_BookAuthors BA ON B.id = BA.book_id
     INNER JOIN books_Author A ON BA.author_id = A.id
@@ -39,7 +39,7 @@ DELIMITER //
 
 CREATE PROCEDURE GetByAuthor(IN author_name VARCHAR(255))
 BEGIN
-    SELECT B.id, B.title, A.name AS author, F.name AS format, GROUP_CONCAT(C.name SEPARATOR ', ') AS categories
+    SELECT B.title, A.name AS author, F.name AS format, GROUP_CONCAT(C.name SEPARATOR ', ') AS categories
     FROM books_Book B
     INNER JOIN books_BookAuthors BA ON B.id = BA.book_id
     INNER JOIN books_Author A ON BA.author_id = A.id
@@ -57,7 +57,7 @@ DELIMITER //
 
 CREATE PROCEDURE GetByLangYear(IN lang VARCHAR(255), IN year INT)
 BEGIN
-    SELECT B.id, B.title, A.name AS author, F.name AS format, C.name AS category
+    SELECT B.title, A.name AS author, F.name AS format, C.name AS category
     FROM books_Book B
     INNER JOIN books_BookAuthors BA ON B.id = BA.book_id
     INNER JOIN books_Author A ON BA.author_id = A.id
